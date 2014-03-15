@@ -1,0 +1,16 @@
+[
+{
+  "modid": "ccSCADA",
+  "name": "ccSCADA",
+  "description": "A set of peripherals for building factory automation systems.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["Mr. Byte"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
