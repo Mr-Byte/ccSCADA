@@ -22,7 +22,6 @@ import net.minecraft.block.Block
 import net.minecraft.world.World
 import net.minecraftforge.common.ForgeDirection
 import com.theenginerd.ccSCADA.peripheral.RedstoneControllerPeripheral
-import cpw.mods.fml.common.FMLLog
 
 trait RedNetBundleProvider extends IConnectableRedNet
 {
@@ -35,13 +34,11 @@ trait RedNetBundleProvider extends IConnectableRedNet
 
     def getOutputValues(world: World, x: Int, y: Int, z: Int, side: ForgeDirection): Array[Int] =
     {
-        FMLLog.info(s"Getting output values for ($x, $y, $z) on $side.")
         world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheral].getOutputValues(side)
     }
 
     def getOutputValue(world: World, x: Int, y: Int, z: Int, side: ForgeDirection, subnet: Int): Int =
     {
-        FMLLog.info(s"Getting output values for ($x, $y, $z) on $side for subnet $subnet.")
         world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheral].getOutputValues(side)(subnet)
     }
 

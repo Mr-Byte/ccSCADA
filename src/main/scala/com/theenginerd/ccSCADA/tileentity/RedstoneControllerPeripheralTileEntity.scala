@@ -22,7 +22,6 @@ import com.theenginerd.ccSCADA.peripheral.RedstoneControllerPeripheral
 import net.minecraftforge.common.ForgeDirection
 import net.minecraft.block.Block
 import powercrystals.minefactoryreloaded.api.rednet.IRedNetNetworkContainer
-import cpw.mods.fml.common.FMLLog
 
 class RedstoneControllerPeripheralTileEntity
     extends TileEntity
@@ -44,12 +43,9 @@ class RedstoneControllerPeripheralTileEntity
             block match
             {
                 case cable: IRedNetNetworkContainer =>
-                    FMLLog.info(s"Sending RedNet input change to ($x, $y, $z)")
                     cable.updateNetwork(worldObj, x, y, z)
 
-                case fail =>
-                    val typ = fail.getClass
-                    FMLLog.info(s"Unable to perform RedNet input change. Type: $typ")
+                case _ =>
             }
         }
 
@@ -60,6 +56,18 @@ class RedstoneControllerPeripheralTileEntity
 
             case ForgeDirection.WEST =>
                 updateNeighborCable(xCoord - 1, yCoord, zCoord)
+
+            case ForgeDirection.UP =>
+                updateNeighborCable(xCoord, yCoord + 1, zCoord)
+
+            case ForgeDirection.DOWN =>
+                updateNeighborCable(xCoord, yCoord - 1, zCoord)
+
+            case ForgeDirection.NORTH =>
+                updateNeighborCable(xCoord, yCoord, zCoord - 1)
+
+            case ForgeDirection.SOUTH =>
+                updateNeighborCable(xCoord, yCoord, zCoord + 1)
 
             case _ =>
         }

@@ -100,7 +100,6 @@ trait RedstoneControllerPeripheral extends Peripheral
     def getOutputValues(side: ForgeDirection) =
         this.synchronized
         {
-            FMLLog.info(s"Getting values for side: $side.")
             outputValues.get(side).getOrElse(defaultValues)
         }
 
