@@ -44,9 +44,9 @@ trait Peripheral extends IPeripheral
 
     private var methods: Array[MethodCallback] = Array()
 
-    def registerMethod(method: MethodCallback) =
+    def registerMethod(name: String, method: (IComputerAccess, Array[AnyRef]) => Array[AnyRef]) =
     {
-        methods :+= method
+        methods :+= new MethodCallback(name, method)
     }
 
     def getMethodNames: Array[String] =

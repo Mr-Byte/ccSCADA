@@ -26,69 +26,9 @@ trait RedstoneControllerPeripheral extends Peripheral
     private var outputValues: Map[ForgeDirection, Array[Int]] = Map()
     private var inputValues: Map[ForgeDirection, Array[Int]] = Map()
 
-    private def convertToBundleState(array: Array[Int]) =
-    {
-        array.view
-             .zipWithIndex
-             .foldLeft(0)
-             {
-                 case (accumulator, (value, index)) =>
-                     accumulator + (if (value > 0) Math.pow(2, index).toInt else 0)
-             }
-    }
-
-    registerMethod
-    {
-        new MethodCallback("getBundledInput",
-                           (computer: IComputerAccess, arguments: Array[AnyRef]) =>
-                               Array(arguments match
-                                     {
-                                         case Array(side: String, _*) =>
-                                             convertToBundleState(getInputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
-                                         case _ =>
-                                             throw new Exception("Invalid argument (side).")
-                                     }))
-    }
-
-    registerMethod
-    {
-        new MethodCallback("getBundledOutput",
-                           (computer: IComputerAccess, arguments: Array[AnyRef]) =>
-                               Array(arguments match
-                                     {
-                                         case Array(side: String, _*) =>
-                                             convertToBundleState(getOutputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
-                                         case _ =>
-                                             throw new Exception("Invalid argument (side).")
-                                     }))
-    }
-
-    registerMethod
-    {
-        new MethodCallback("setBundledOutput",
-                           (computer: IComputerAccess, arguments: Array[AnyRef]) =>
-                               arguments match
-                               {
-                                   case Array(side: String, colors: java.lang.Double, _*) =>
-                                       val value = colors.toInt
-                                       val result = defaultValues.clone()
-
-                                       for(index <- 0 to 15)
-                                       {
-                                           if(((value >> index) & 0x1) == 0x1)
-                                           {
-                                                result(index) = 15
-                                           }
-                                       }
-
-                                       setOutputValues(Conversions.stringToDirection(side), result)
-
-                                       null
-                                   case _ =>
-                                       throw new Exception("Invalid arguments (side, colors).")
-                               }
-        )
-    }
+    registerMethod("getBundledInput", getBundleInput)
+    registerMethod("getBundledOutput", getBundleOutput)
+    registerMethod("setBundledOutput", setBundledOutput)
 
     def getInputValues(side: ForgeDirection) =
         this.synchronized
@@ -122,4 +62,61 @@ trait RedstoneControllerPeripheral extends Peripheral
         "redstone_controller"
 
     def onOutputValuesUpdate(outputSide: ForgeDirection, values: Array[Int])
+
+    private def convertToBundleState(array: Array[Int]) =
+    {
+        array.view
+             .zipWithIndex
+             .foldLeft(0)
+             {
+                 case (accumulator, (value, index)) =>
+                     accumulator + (if (value > 0) Math.pow(2, index).toInt else 0)
+             }
+    }
+
+    private def getBundleInput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        Array(arguments match
+              {
+                  case Array(side: String, _*) =>
+                      convertToBundleState(getInputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
+                  case _ =>
+                      throw new Exception("Invalid argument (side).")
+              })
+    }
+
+    private def getBundleOutput(computer: IComputerAccess, arguments: Array[AnyRef]) =
+    {
+        Array(arguments match
+              {
+                  case Array(side: String, _*) =>
+                      convertToBundleState(getOutputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
+                  case _ =>
+                      throw new Exception("Invalid argument (side).")
+              })
+    }
+
+    private def setBundledOutput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        arguments match
+        {
+            case Array(side: String, colors: java.lang.Double, _*) =>
+                val value = colors.toInt
+                val result = defaultValues.clone()
+
+                for (index <- 0 to 15)
+                {
+                    if (((value >> index) & 0x1) == 0x1)
+                    {
+                        result(index) = 15
+                    }
+                }
+
+                setOutputValues(Conversions.stringToDirection(side), result)
+
+                null
+            case _ =>
+                throw new Exception("Invalid arguments (side, colors).")
+        }
+    }
 }

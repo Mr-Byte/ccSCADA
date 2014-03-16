@@ -17,7 +17,7 @@
 
 package com.theenginerd.ccSCADA.block
 
-import net.minecraft.block.BlockContainer
+import net.minecraft.block.{Block, ITileEntityProvider, BlockContainer}
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
 import cpw.mods.fml.common.registry.GameRegistry
@@ -53,12 +53,10 @@ object RedstoneControllerPeripheralBlock
     {
         if(Loader.isModLoaded(dependentMods.MineFactoryReloadedId))
         {
-            FMLLog.info("Loading RedNet enabled version.")
             new RedstoneControllerPeripheralBlock(blockId) with RedNetBundleProvider
         }
         else
         {
-            FMLLog.info("MineFactory Reloaded was not found.")
             new RedstoneControllerPeripheralBlock(blockId)
         }
     }
