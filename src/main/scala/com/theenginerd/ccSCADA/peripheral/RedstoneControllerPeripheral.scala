@@ -19,23 +19,22 @@ package com.theenginerd.ccSCADA.peripheral
 
 import net.minecraftforge.common.ForgeDirection
 import dan200.computer.api.IComputerAccess
-import cpw.mods.fml.common.FMLLog
 
 trait RedstoneControllerPeripheral extends Peripheral
 {
-    private val defaultValues = Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    private val defaultValues = Array.fill(16)(0)
     private var outputValues: Map[ForgeDirection, Array[Int]] = Map()
     private var inputValues: Map[ForgeDirection, Array[Int]] = Map()
 
-    private def convertToInteger(array: Array[Int]) =
+    private def convertToBundleState(array: Array[Int]) =
     {
         array.view
-        .zipWithIndex
-        .foldLeft(0)
-        {
-            case (accumulator, (value, index)) =>
-                accumulator + (if (value > 0) Math.pow(2, index).toInt else 0)
-        }
+             .zipWithIndex
+             .foldLeft(0)
+             {
+                 case (accumulator, (value, index)) =>
+                     accumulator + (if (value > 0) Math.pow(2, index).toInt else 0)
+             }
     }
 
     registerMethod
@@ -45,7 +44,7 @@ trait RedstoneControllerPeripheral extends Peripheral
                                Array(arguments match
                                      {
                                          case Array(side: String, _*) =>
-                                             convertToInteger(getInputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
+                                             convertToBundleState(getInputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
                                          case _ =>
                                              throw new Exception("Invalid argument (side).")
                                      }))
@@ -58,7 +57,7 @@ trait RedstoneControllerPeripheral extends Peripheral
                                Array(arguments match
                                      {
                                          case Array(side: String, _*) =>
-                                             convertToInteger(getOutputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
+                                             convertToBundleState(getOutputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
                                          case _ =>
                                              throw new Exception("Invalid argument (side).")
                                      }))

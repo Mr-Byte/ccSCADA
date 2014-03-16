@@ -26,14 +26,11 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraftforge.common.ForgeDirection
 import com.theenginerd.ccSCADA.tileentity.RedstoneControllerPeripheralTileEntity
 import com.theenginerd.ccSCADA.block.redstoneBundleProvider.RedNetBundleProvider
-import powercrystals.minefactoryreloaded.api.rednet.{RedNetConnectionType, IConnectableRedNet}
-import com.theenginerd.ccSCADA.peripheral.RedstoneControllerPeripheral
-import cpw.mods.fml.common.FMLLog
-
+import cpw.mods.fml.common.{FMLLog, Loader}
+import com.theenginerd.ccSCADA.dependentMods
 
 class RedstoneControllerPeripheralBlock(blockId: Int)
     extends BlockContainer(blockId, Material.rock)
-    with RedNetBundleProvider
 {
     setHardness(0.5F)
     setCreativeTab(CreativeTabs.tabMisc)
@@ -43,8 +40,27 @@ class RedstoneControllerPeripheralBlock(blockId: Int)
     GameRegistry.registerTileEntity(classOf[RedstoneControllerPeripheralTileEntity], "redstoneControllerPeripheral")
 
     //TODO: Load texture icon.
+
     override def createNewTileEntity(world: World): TileEntity = new RedstoneControllerPeripheralTileEntity()
 
     override def getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, metadata: Int, facing: ForgeDirection) = 0
     override def isFlammable(world: IBlockAccess, x: Int, y: Int, z: Int, metadata: Int, facing: ForgeDirection) = false
+}
+
+object RedstoneControllerPeripheralBlock
+{
+    def apply(blockId: Int): RedstoneControllerPeripheralBlock =
+    {
+        if(Loader.isModLoaded(dependentMods.MineFactoryReloadedId))
+        {
+            FMLLog.info("Loading RedNet enabled version.")
+            new RedstoneControllerPeripheralBlock(blockId) with RedNetBundleProvider
+        }
+        else
+        {
+            FMLLog.info("MineFactory Reloaded was not found.")
+            new RedstoneControllerPeripheralBlock(blockId)
+        }
+    }
+
 }

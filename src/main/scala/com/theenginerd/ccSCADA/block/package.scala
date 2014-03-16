@@ -23,11 +23,12 @@ import net.minecraft.block.Block
 package object block
 {
     val redstoneControllerPeripheralName = "redstoneControllerPeripheral"
-    val redstoneControllerPeripheralId = 3410
+
+    private var redstoneControllerPeripheralId = 3410
 
     var blocks: Map[String, Block] = Map()
 
-    def registerBlocks(configuration: Configuration) =
+    def loadBlockIds(configuration: Configuration) =
     {
         def getBlockId(propertyName: String, defaultValue: Int) =
         {
@@ -35,6 +36,11 @@ package object block
             property.getInt
         }
 
-        blocks += redstoneControllerPeripheralName -> new RedstoneControllerPeripheralBlock(getBlockId(redstoneControllerPeripheralName, redstoneControllerPeripheralId))
+        redstoneControllerPeripheralId = getBlockId(redstoneControllerPeripheralName, redstoneControllerPeripheralId)
+    }
+
+    def registerBlocks() =
+    {
+        blocks += redstoneControllerPeripheralName -> RedstoneControllerPeripheralBlock(redstoneControllerPeripheralId)
     }
 }

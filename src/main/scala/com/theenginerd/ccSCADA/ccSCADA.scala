@@ -36,7 +36,8 @@ object ccSCADA
         try
         {
             configuration.load()
-            block.registerBlocks(configuration)
+            block.loadBlockIds(configuration)
+            block.registerBlocks()
         }
         catch
         {
