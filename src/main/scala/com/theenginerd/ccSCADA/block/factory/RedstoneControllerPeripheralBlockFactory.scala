@@ -15,15 +15,17 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.peripheral
+package com.theenginerd.ccSCADA.block.factory
 
-import net.minecraftforge.common.ForgeDirection
-import dan200.computer.api.IComputerAccess
-import net.minecraft.tileentity.TileEntity
-import net.minecraft.block.Block
-import powercrystals.minefactoryreloaded.api.rednet.IRedNetNetworkContainer
+import cpw.mods.fml.common.registry.GameRegistry
+import com.theenginerd.ccSCADA.block.RedstoneControllerPeripheralBlock
+import com.theenginerd.ccSCADA.tileentity.RedstoneControllerPeripheralTileEntity
 
-trait RedstoneControllerPeripheral extends Peripheral
+object RedstoneControllerPeripheralBlockFactory extends BlockFactory
 {
-
+    def createBlock(blockId: Int) =
+    {
+        GameRegistry.registerTileEntity(classOf[RedstoneControllerPeripheralTileEntity], "redstoneControllerPeripheral")
+        new RedstoneControllerPeripheralBlock(blockId)
+    }
 }

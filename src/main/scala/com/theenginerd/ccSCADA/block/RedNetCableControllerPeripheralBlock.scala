@@ -15,15 +15,19 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.peripheral
+package com.theenginerd.ccSCADA.block
 
-import net.minecraftforge.common.ForgeDirection
-import dan200.computer.api.IComputerAccess
+import net.minecraft.world.World
+import com.theenginerd.ccSCADA.tileentity.RedNetCableControllerPeripheralTileEntity
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.block.Block
-import powercrystals.minefactoryreloaded.api.rednet.IRedNetNetworkContainer
+import com.theenginerd.ccSCADA.block.redstoneBundleProvider.RedNetConnectable
 
-trait RedstoneControllerPeripheral extends Peripheral
+class RedNetCableControllerPeripheralBlock(blockId: Int)
+    extends RedstoneControllerPeripheralBlock(blockId)
+    with RedNetConnectable
 {
-
+    override def createNewTileEntity(world: World): TileEntity =
+    {
+        new RedNetCableControllerPeripheralTileEntity()
+    }
 }

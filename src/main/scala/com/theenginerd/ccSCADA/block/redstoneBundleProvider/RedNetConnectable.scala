@@ -21,9 +21,9 @@ import powercrystals.minefactoryreloaded.api.rednet.{RedNetConnectionType, IConn
 import net.minecraft.block.Block
 import net.minecraft.world.World
 import net.minecraftforge.common.ForgeDirection
-import com.theenginerd.ccSCADA.peripheral.RedstoneControllerPeripheral
+import com.theenginerd.ccSCADA.peripheral.{RedNetCablePeripheral, RedstoneControllerPeripheral}
 
-trait RedNetBundleProvider extends IConnectableRedNet
+trait RedNetConnectable extends IConnectableRedNet
 {
     self: Block =>
 
@@ -34,17 +34,17 @@ trait RedNetBundleProvider extends IConnectableRedNet
 
     def getOutputValues(world: World, x: Int, y: Int, z: Int, side: ForgeDirection): Array[Int] =
     {
-        world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheral].getOutputValues(side)
+        world.getBlockTileEntity(x, y, z).asInstanceOf[RedNetCablePeripheral].getOutputValues(side)
     }
 
     def getOutputValue(world: World, x: Int, y: Int, z: Int, side: ForgeDirection, subnet: Int): Int =
     {
-        world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheral].getOutputValues(side)(subnet)
+        world.getBlockTileEntity(x, y, z).asInstanceOf[RedNetCablePeripheral].getOutputValues(side)(subnet)
     }
 
     def onInputsChanged(world: World, x: Int, y: Int, z: Int, side: ForgeDirection, inputValues: Array[Int]) =
     {
-        world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheral].setInputValues(side, inputValues)
+        world.getBlockTileEntity(x, y, z).asInstanceOf[RedNetCablePeripheral].setInputValues(side, inputValues)
     }
 
     def onInputChanged(world: World, x: Int, y: Int, z: Int, side: ForgeDirection, inputValue: Int)

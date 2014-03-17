@@ -17,7 +17,7 @@
 
 package com.theenginerd.ccSCADA.block
 
-import net.minecraft.block.{Block, ITileEntityProvider, BlockContainer}
+import net.minecraft.block.BlockContainer
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
 import cpw.mods.fml.common.registry.GameRegistry
@@ -25,9 +25,6 @@ import net.minecraft.world.{IBlockAccess, World}
 import net.minecraft.tileentity.TileEntity
 import net.minecraftforge.common.ForgeDirection
 import com.theenginerd.ccSCADA.tileentity.RedstoneControllerPeripheralTileEntity
-import com.theenginerd.ccSCADA.block.redstoneBundleProvider.RedNetBundleProvider
-import cpw.mods.fml.common.{FMLLog, Loader}
-import com.theenginerd.ccSCADA.dependentMods
 
 class RedstoneControllerPeripheralBlock(blockId: Int)
     extends BlockContainer(blockId, Material.rock)
@@ -37,28 +34,14 @@ class RedstoneControllerPeripheralBlock(blockId: Int)
     setUnlocalizedName("ccSCADA.redstoneControllerPeripheral")
 
     GameRegistry.registerBlock(this, "redstoneControllerPeripheral")
-    GameRegistry.registerTileEntity(classOf[RedstoneControllerPeripheralTileEntity], "redstoneControllerPeripheral")
 
     //TODO: Load texture icon.
 
-    override def createNewTileEntity(world: World): TileEntity = new RedstoneControllerPeripheralTileEntity()
+    override def createNewTileEntity(world: World): TileEntity =
+    {
+        new RedstoneControllerPeripheralTileEntity()
+    }
 
     override def getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, metadata: Int, facing: ForgeDirection) = 0
     override def isFlammable(world: IBlockAccess, x: Int, y: Int, z: Int, metadata: Int, facing: ForgeDirection) = false
-}
-
-object RedstoneControllerPeripheralBlock
-{
-    def apply(blockId: Int): RedstoneControllerPeripheralBlock =
-    {
-        if(Loader.isModLoaded(dependentMods.MineFactoryReloadedId))
-        {
-            new RedstoneControllerPeripheralBlock(blockId) with RedNetBundleProvider
-        }
-        else
-        {
-            new RedstoneControllerPeripheralBlock(blockId)
-        }
-    }
-
 }

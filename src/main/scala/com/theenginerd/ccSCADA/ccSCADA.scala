@@ -37,7 +37,6 @@ object ccSCADA
         {
             configuration.load()
             block.loadBlockIds(configuration)
-            block.registerBlocks()
         }
         catch
         {
@@ -53,6 +52,6 @@ object ccSCADA
     @EventHandler
     def initialize(event: FMLInitializationEvent) =
     {
-
+        block.registerBlocks()
     }
 }

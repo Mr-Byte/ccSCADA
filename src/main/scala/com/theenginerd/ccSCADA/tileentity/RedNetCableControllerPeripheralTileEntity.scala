@@ -15,15 +15,10 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.peripheral
+package com.theenginerd.ccSCADA.tileentity
 
-import net.minecraftforge.common.ForgeDirection
-import dan200.computer.api.IComputerAccess
-import net.minecraft.tileentity.TileEntity
-import net.minecraft.block.Block
-import powercrystals.minefactoryreloaded.api.rednet.IRedNetNetworkContainer
+import com.theenginerd.ccSCADA.peripheral.RedNetCablePeripheral
 
-trait RedstoneControllerPeripheral extends Peripheral
-{
-
-}
+class RedNetCableControllerPeripheralTileEntity
+    extends RedstoneControllerPeripheralTileEntity
+    with RedNetCablePeripheral

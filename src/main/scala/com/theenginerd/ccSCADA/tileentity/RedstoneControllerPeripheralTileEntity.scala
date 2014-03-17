@@ -19,9 +19,6 @@ package com.theenginerd.ccSCADA.tileentity
 
 import net.minecraft.tileentity.TileEntity
 import com.theenginerd.ccSCADA.peripheral.RedstoneControllerPeripheral
-import net.minecraftforge.common.ForgeDirection
-import net.minecraft.block.Block
-import powercrystals.minefactoryreloaded.api.rednet.IRedNetNetworkContainer
 
 class RedstoneControllerPeripheralTileEntity
     extends TileEntity
@@ -33,43 +30,6 @@ class RedstoneControllerPeripheralTileEntity
         update()
     }
 
-    override def onOutputValuesUpdate(outputSide: ForgeDirection, values: Array[Int]) =
-    {
-        def updateNeighborCable(x: Int, y: Int, z: Int) =
-        {
-            val blockId = worldObj.getBlockId(x, y, z)
-            val block = Block.blocksList(blockId)
-
-            block match
-            {
-                case cable: IRedNetNetworkContainer =>
-                    cable.updateNetwork(worldObj, x, y, z)
-
-                case _ =>
-            }
-        }
-
-        outputSide match
-        {
-            case ForgeDirection.EAST =>
-                updateNeighborCable(xCoord + 1, yCoord, zCoord)
-
-            case ForgeDirection.WEST =>
-                updateNeighborCable(xCoord - 1, yCoord, zCoord)
-
-            case ForgeDirection.UP =>
-                updateNeighborCable(xCoord, yCoord + 1, zCoord)
-
-            case ForgeDirection.DOWN =>
-                updateNeighborCable(xCoord, yCoord - 1, zCoord)
-
-            case ForgeDirection.NORTH =>
-                updateNeighborCable(xCoord, yCoord, zCoord - 1)
-
-            case ForgeDirection.SOUTH =>
-                updateNeighborCable(xCoord, yCoord, zCoord + 1)
-
-            case _ =>
-        }
-    }
+    def getType: String =
+        "redstone_controller"
 }

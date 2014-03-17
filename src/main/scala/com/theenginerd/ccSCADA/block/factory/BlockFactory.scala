@@ -15,15 +15,28 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.peripheral
+package com.theenginerd.ccSCADA.block.factory
 
-import net.minecraftforge.common.ForgeDirection
-import dan200.computer.api.IComputerAccess
-import net.minecraft.tileentity.TileEntity
+import cpw.mods.fml.common.{Loader, FMLLog}
 import net.minecraft.block.Block
-import powercrystals.minefactoryreloaded.api.rednet.IRedNetNetworkContainer
 
-trait RedstoneControllerPeripheral extends Peripheral
+trait BlockFactory
 {
+    def createBlock(blockId: Int): Block
+}
 
+object BlockFactory
+{
+    def createRedstoneControllerPeripheralBlock(blockId: Int): Block =
+    {
+        FMLLog.info("Creating RedstoneControllerPeripheralBlock type.")
+
+        val factory = Loader.isModLoaded("MineFactoryReloaded") match
+        {
+            case true => RedNetCableControllerPeripheralFactory
+            case false => RedstoneControllerPeripheralBlockFactory
+        }
+
+        factory.createBlock(blockId)
+    }
 }

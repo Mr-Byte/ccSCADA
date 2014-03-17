@@ -19,6 +19,8 @@ package com.theenginerd.ccSCADA
 
 import net.minecraftforge.common.Configuration
 import net.minecraft.block.Block
+import cpw.mods.fml.common.FMLLog
+import com.theenginerd.ccSCADA.block.factory.BlockFactory
 
 package object block
 {
@@ -41,6 +43,8 @@ package object block
 
     def registerBlocks() =
     {
-        blocks += redstoneControllerPeripheralName -> RedstoneControllerPeripheralBlock(redstoneControllerPeripheralId)
+        FMLLog.info("Registering blocks.")
+        blocks += redstoneControllerPeripheralName -> BlockFactory.createRedstoneControllerPeripheralBlock(redstoneControllerPeripheralId)
+        FMLLog.info("Block registration completed.")
     }
 }
