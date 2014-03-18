@@ -34,7 +34,7 @@ trait RedNetConnectable extends IConnectableRedNet
 
     def getOutputValues(world: World, x: Int, y: Int, z: Int, side: ForgeDirection): Array[Int] =
     {
-        world.getBlockTileEntity(x, y, z).asInstanceOf[RedNetCableSupport].getOutputValues(side)
+        world.getBlockTileEntity(x, y, z).asInstanceOf[RedNetCableSupport].getOutputValues(side).toArray
     }
 
     def getOutputValue(world: World, x: Int, y: Int, z: Int, side: ForgeDirection, subnet: Int): Int =
@@ -44,7 +44,7 @@ trait RedNetConnectable extends IConnectableRedNet
 
     def onInputsChanged(world: World, x: Int, y: Int, z: Int, side: ForgeDirection, inputValues: Array[Int]) =
     {
-        world.getBlockTileEntity(x, y, z).asInstanceOf[RedNetCableSupport].setInputValues(side, inputValues)
+        world.getBlockTileEntity(x, y, z).asInstanceOf[RedNetCableSupport].setInputValues(side, inputValues.toVector)
     }
 
     def onInputChanged(world: World, x: Int, y: Int, z: Int, side: ForgeDirection, inputValue: Int)

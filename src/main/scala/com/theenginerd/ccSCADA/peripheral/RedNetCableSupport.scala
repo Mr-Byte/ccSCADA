@@ -28,13 +28,21 @@ trait RedNetCableSupport extends Peripheral
 {
     self: TileEntity =>
 
-    private val defaultValues = Array.fill(16)(0)
-    private var outputValues: Map[ForgeDirection, Array[Int]] = Map()
-    private var inputValues: Map[ForgeDirection, Array[Int]] = Map()
+    private val defaultValues = Vector.fill(16)(0)
+    private var outputValues: Map[ForgeDirection, Vector[Int]] = Map()
+    private var inputValues: Map[ForgeDirection, Vector[Int]] = Map()
 
+    //Bundled Input method handlers
     registerMethod("getBundledInput", getBundledInput)
     registerMethod("getBundledOutput", getBundledOutput)
     registerMethod("setBundledOutput", setBundledOutput)
+    registerMethod("testBundledInput", testBundledInput)
+
+    //Individual subnet handlers
+    registerMethod("setSubnetOutput", setSubnetOutput)
+    registerMethod("getSubnetOutput", getSubnetOutput)
+    registerMethod("getSubnetInput", getSubnetInput)
+
 
     def getInputValues(side: ForgeDirection) =
         this.synchronized
@@ -48,72 +56,72 @@ trait RedNetCableSupport extends Peripheral
             outputValues.get(side).getOrElse(defaultValues)
         }
 
-    def setInputValues(side: ForgeDirection, values: Array[Int]) =
+    def setInputValues(side: ForgeDirection, values: Vector[Int]) =
         this.synchronized
         {
             inputValues += (side -> values)
         }
 
-    def setOutputValues(side: ForgeDirection, values: Array[Int]) =
+    def setOutputValues(side: ForgeDirection, values: Vector[Int]) =
     {
         this.synchronized
         {
             outputValues += (side -> values)
         }
-
-        addUpdate(() => onOutputValuesUpdate(side))
     }
 
     private def getBundledInput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
     {
-        Array(arguments match
-              {
-                  case Array(side: String, _*) =>
-                      convertToBundleState(getInputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
-                  case _ =>
-                      throw new Exception("Invalid argument (side).")
-              })
+        arguments match
+        {
+            case Array(side: String, _*) =>
+                Array(convertToBundleState(getInputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef])
+            case _ =>
+                throw new Exception("Invalid argument (side).")
+        }
     }
 
     private def getBundledOutput(computer: IComputerAccess, arguments: Array[AnyRef]) =
     {
-        Array(arguments match
-              {
-                  case Array(side: String, _*) =>
-                      convertToBundleState(getOutputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef]
-                  case _ =>
-                      throw new Exception("Invalid argument (side).")
-              })
+        arguments match
+        {
+            case Array(side: String, _*) =>
+                Array(convertToBundleState(getOutputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef])
+            case _ =>
+                throw new Exception("Invalid argument (side).")
+        }
     }
 
-    private def convertToBundleState(array: Array[Int]) =
+    private def convertToBundleState(array: Vector[Int]) =
     {
         array.view
-        .zipWithIndex
-        .foldLeft(0)
-        {
-            case (accumulator, (value, index)) =>
-                accumulator | (if (value > 0) 0x1 << index else 0)
-        }
+             .zipWithIndex
+             .foldLeft(0)
+             {
+                 case (accumulator, (value, index)) =>
+                     accumulator | (if (value > 0) 0x1 << index else 0)
+             }
     }
 
     private def setBundledOutput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
     {
         arguments match
         {
-            case Array(side: String, colors: java.lang.Double, _*) =>
+            case Array(sideName: String, colors: java.lang.Double, _*) =>
                 val value = colors.toInt
-                val result = defaultValues.clone()
+                var result = defaultValues
 
                 for (index <- 0 to 15)
                 {
                     if (((value >> index) & 0x1) == 0x1)
                     {
-                        result(index) = 15
+                        result = result.updated(index, value)
                     }
                 }
 
-                setOutputValues(Conversions.stringToDirection(side), result)
+                val side = Conversions.stringToDirection(sideName)
+                setOutputValues(side, result)
+                addUpdate(() => notifyNeighborOnSideOfUpdate(side))
 
                 null
             case _ =>
@@ -121,7 +129,7 @@ trait RedNetCableSupport extends Peripheral
         }
     }
 
-    private def onOutputValuesUpdate(outputSide: ForgeDirection) =
+    private def notifyNeighborOnSideOfUpdate(outputSide: ForgeDirection) =
     {
         def updateNeighborCable(x: Int, y: Int, z: Int) =
         {
@@ -157,4 +165,39 @@ trait RedNetCableSupport extends Peripheral
             case _ =>
         }
     }
+
+    private def testBundledInput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        arguments match
+        {
+            case Array(sideName: String, color: java.lang.Double, _*) =>
+                val index = Math.getExponent(color.toDouble)
+                val inputValues = getInputValues(Conversions.stringToDirection(sideName))
+
+                if(index < 0 || index > inputValues.length)
+                    throw new Exception("Invalid argument (color).")
+
+                Array((inputValues(index) > 0).asInstanceOf[AnyRef])
+
+            case _ =>
+                throw new Exception("Invalid arguments (side, color).")
+        }
+    }
+
+    private def setSubnetOutput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        ???
+    }
+
+    private def getSubnetOutput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        ???
+    }
+
+    private def getSubnetInput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        ???
+    }
+
+    private def performSubnetUpdateForSide(outputSide: ForgeDirection, subnet: Int) = ???
 }
