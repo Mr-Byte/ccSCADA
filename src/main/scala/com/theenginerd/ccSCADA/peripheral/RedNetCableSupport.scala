@@ -68,6 +68,45 @@ trait RedNetCableSupport extends Peripheral
         {
             outputValues += (side -> values)
         }
+
+        addUpdate(() => notifyNeighborOnSideOfUpdate(side))
+    }
+
+    private def notifyNeighborOnSideOfUpdate(outputSide: ForgeDirection) =
+    {
+        def updateNeighborCable(x: Int, y: Int, z: Int) =
+        {
+            //For porting forward to 1.7.2
+            val worldObj = getWorldObj
+            val blockId = worldObj.getBlockId(x, y, z)
+            val block = Option(Block.blocksList(blockId))
+
+            for(AsType(cable: IRedNetNetworkContainer) <- block)
+                cable.updateNetwork(worldObj, x, y, z)
+        }
+
+        outputSide match
+        {
+            case ForgeDirection.EAST =>
+                updateNeighborCable(xCoord + 1, yCoord, zCoord)
+
+            case ForgeDirection.WEST =>
+                updateNeighborCable(xCoord - 1, yCoord, zCoord)
+
+            case ForgeDirection.UP =>
+                updateNeighborCable(xCoord, yCoord + 1, zCoord)
+
+            case ForgeDirection.DOWN =>
+                updateNeighborCable(xCoord, yCoord - 1, zCoord)
+
+            case ForgeDirection.NORTH =>
+                updateNeighborCable(xCoord, yCoord, zCoord - 1)
+
+            case ForgeDirection.SOUTH =>
+                updateNeighborCable(xCoord, yCoord, zCoord + 1)
+
+            case _ =>
+        }
     }
 
     private def getBundledInput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
@@ -121,48 +160,10 @@ trait RedNetCableSupport extends Peripheral
 
                 val side = Conversions.stringToDirection(sideName)
                 setOutputValues(side, result)
-                addUpdate(() => notifyNeighborOnSideOfUpdate(side))
 
                 null
             case _ =>
                 throw new Exception("Invalid arguments (side, colors).")
-        }
-    }
-
-    private def notifyNeighborOnSideOfUpdate(outputSide: ForgeDirection) =
-    {
-        def updateNeighborCable(x: Int, y: Int, z: Int) =
-        {
-            //For porting forward to 1.7.2
-            val worldObj = getWorldObj
-            val blockId = worldObj.getBlockId(x, y, z)
-            val block = Option(Block.blocksList(blockId))
-
-            for(AsType(cable: IRedNetNetworkContainer) <- block)
-                cable.updateNetwork(worldObj, x, y, z)
-        }
-
-        outputSide match
-        {
-            case ForgeDirection.EAST =>
-                updateNeighborCable(xCoord + 1, yCoord, zCoord)
-
-            case ForgeDirection.WEST =>
-                updateNeighborCable(xCoord - 1, yCoord, zCoord)
-
-            case ForgeDirection.UP =>
-                updateNeighborCable(xCoord, yCoord + 1, zCoord)
-
-            case ForgeDirection.DOWN =>
-                updateNeighborCable(xCoord, yCoord - 1, zCoord)
-
-            case ForgeDirection.NORTH =>
-                updateNeighborCable(xCoord, yCoord, zCoord - 1)
-
-            case ForgeDirection.SOUTH =>
-                updateNeighborCable(xCoord, yCoord, zCoord + 1)
-
-            case _ =>
         }
     }
 
@@ -186,17 +187,47 @@ trait RedNetCableSupport extends Peripheral
 
     private def setSubnetOutput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
     {
-        ???
+        arguments match
+        {
+            case Array(sideName: String, subnet: java.lang.Double, value: java.lang.Double, _*) =>
+                val side = Conversions.stringToDirection(sideName)
+                val outputs = getOutputValues(side)
+
+                setOutputValues(side, outputs.updated(subnet.toInt, value.toInt))
+
+                null
+
+            case _ =>
+                throw new Exception("Invalid arguments (side, subnet)")
+        }
     }
 
     private def getSubnetOutput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
     {
-        ???
+        arguments match
+        {
+            case Array(sideName: String, subnet: java.lang.Double, _*) =>
+                val outputs = getOutputValues(Conversions.stringToDirection(sideName))
+
+                Array(outputs(subnet.toInt).asInstanceOf[AnyRef])
+
+            case _ =>
+                throw new Exception("Invalid arguments (side, subnet)")
+        }
     }
 
     private def getSubnetInput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
     {
-        ???
+        arguments match
+        {
+            case Array(sideName: String, subnet: java.lang.Double, _*) =>
+                val outputs = getInputValues(Conversions.stringToDirection(sideName))
+
+                Array(outputs(subnet.toInt).asInstanceOf[AnyRef])
+
+            case _ =>
+                throw new Exception("Invalid arguments (side, subnet)")
+        }
     }
 
     private def performSubnetUpdateForSide(outputSide: ForgeDirection, subnet: Int) = ???
