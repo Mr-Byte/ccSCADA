@@ -22,8 +22,9 @@ import net.minecraftforge.common.ForgeDirection
 import dan200.computer.api.IComputerAccess
 import powercrystals.minefactoryreloaded.api.rednet.IRedNetNetworkContainer
 import net.minecraft.block.Block
+import com.theenginerd.ccSCADA.util.AsType
 
-trait RedNetCablePeripheral extends RedstoneControllerPeripheral
+trait RedNetCableSupport extends Peripheral
 {
     self: TileEntity =>
 
@@ -92,7 +93,7 @@ trait RedNetCablePeripheral extends RedstoneControllerPeripheral
         .foldLeft(0)
         {
             case (accumulator, (value, index)) =>
-                accumulator + (if (value > 0) Math.pow(2, index).toInt else 0)
+                accumulator | (if (value > 0) 0x1 << index else 0)
         }
     }
 
@@ -127,15 +128,10 @@ trait RedNetCablePeripheral extends RedstoneControllerPeripheral
             //For porting forward to 1.7.2
             val worldObj = getWorldObj
             val blockId = worldObj.getBlockId(x, y, z)
-            val block = Block.blocksList(blockId)
+            val block = Option(Block.blocksList(blockId))
 
-            block match
-            {
-                case cable: IRedNetNetworkContainer =>
-                    cable.updateNetwork(worldObj, x, y, z)
-
-                case _ =>
-            }
+            for(AsType(cable: IRedNetNetworkContainer) <- block)
+                cable.updateNetwork(worldObj, x, y, z)
         }
 
         outputSide match

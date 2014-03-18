@@ -21,12 +21,10 @@ import net.minecraft.block.BlockContainer
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
 import cpw.mods.fml.common.registry.GameRegistry
-import net.minecraft.world.{IBlockAccess, World}
-import net.minecraft.tileentity.TileEntity
+import net.minecraft.world.IBlockAccess
 import net.minecraftforge.common.ForgeDirection
-import com.theenginerd.ccSCADA.tileentity.RedstoneControllerPeripheralTileEntity
 
-class RedstoneControllerPeripheralBlock(blockId: Int)
+abstract class RedstoneControllerPeripheralBlock(blockId: Int)
     extends BlockContainer(blockId, Material.rock)
 {
     setHardness(0.5F)
@@ -36,11 +34,6 @@ class RedstoneControllerPeripheralBlock(blockId: Int)
     GameRegistry.registerBlock(this, "redstoneControllerPeripheral")
 
     //TODO: Load texture icon.
-
-    override def createNewTileEntity(world: World): TileEntity =
-    {
-        new RedstoneControllerPeripheralTileEntity()
-    }
 
     override def getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, metadata: Int, facing: ForgeDirection) = 0
     override def isFlammable(world: IBlockAccess, x: Int, y: Int, z: Int, metadata: Int, facing: ForgeDirection) = false

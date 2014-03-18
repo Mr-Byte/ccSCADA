@@ -20,6 +20,8 @@ package com.theenginerd.ccSCADA.block.factory
 import cpw.mods.fml.common.registry.GameRegistry
 import com.theenginerd.ccSCADA.block.RedstoneControllerPeripheralBlock
 import com.theenginerd.ccSCADA.tileentity.RedstoneControllerPeripheralTileEntity
+import net.minecraft.tileentity.TileEntity
+import net.minecraft.world.World
 
 object RedstoneControllerPeripheralBlockFactory extends BlockFactory
 {
@@ -27,5 +29,11 @@ object RedstoneControllerPeripheralBlockFactory extends BlockFactory
     {
         GameRegistry.registerTileEntity(classOf[RedstoneControllerPeripheralTileEntity], "redstoneControllerPeripheral")
         new RedstoneControllerPeripheralBlock(blockId)
+        {
+            override def createNewTileEntity(world: World): TileEntity =
+            {
+                new RedstoneControllerPeripheralTileEntity
+            }
+        }
     }
 }

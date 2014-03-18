@@ -18,14 +18,28 @@
 package com.theenginerd.ccSCADA.block.factory
 
 import cpw.mods.fml.common.registry.GameRegistry
-import com.theenginerd.ccSCADA.block.RedNetCableControllerPeripheralBlock
-import com.theenginerd.ccSCADA.tileentity.RedNetCableControllerPeripheralTileEntity
+import com.theenginerd.ccSCADA.block.RedstoneControllerPeripheralBlock
+import com.theenginerd.ccSCADA.tileentity.RedstoneControllerPeripheralTileEntity
+import com.theenginerd.ccSCADA.block.redstoneBundleProvider.RedNetConnectable
+import com.theenginerd.ccSCADA.peripheral.RedNetCableSupport
+import net.minecraft.tileentity.TileEntity
+import net.minecraft.world.World
 
 object RedNetCableControllerPeripheralFactory extends BlockFactory
 {
+    private class RedstoneControllerPeripheralTileEntityWithRedNetCableSupport
+        extends RedstoneControllerPeripheralTileEntity
+        with RedNetCableSupport
+
     def createBlock(blockId: Int) =
     {
-        GameRegistry.registerTileEntity(classOf[RedNetCableControllerPeripheralTileEntity], "redstoneControllerPeripheral")
-        new RedNetCableControllerPeripheralBlock(blockId)
+        GameRegistry.registerTileEntity(classOf[RedstoneControllerPeripheralTileEntityWithRedNetCableSupport], "redstoneControllerPeripheral")
+
+        new RedstoneControllerPeripheralBlock(blockId) with
+            RedNetConnectable
+        {
+            override def createNewTileEntity(world: World): TileEntity =
+                new RedstoneControllerPeripheralTileEntityWithRedNetCableSupport
+        }
     }
 }

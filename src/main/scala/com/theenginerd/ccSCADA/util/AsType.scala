@@ -15,19 +15,9 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.block
+package com.theenginerd.ccSCADA.util
 
-import net.minecraft.world.World
-import com.theenginerd.ccSCADA.tileentity.RedNetCableControllerPeripheralTileEntity
-import net.minecraft.tileentity.TileEntity
-import com.theenginerd.ccSCADA.block.redstoneBundleProvider.RedNetConnectable
-
-class RedNetCableControllerPeripheralBlock(blockId: Int)
-    extends RedstoneControllerPeripheralBlock(blockId)
-    with RedNetConnectable
+object AsType
 {
-    override def createNewTileEntity(world: World): TileEntity =
-    {
-        new RedNetCableControllerPeripheralTileEntity()
-    }
+    def unapply[T](input: T) = Some(input)
 }
