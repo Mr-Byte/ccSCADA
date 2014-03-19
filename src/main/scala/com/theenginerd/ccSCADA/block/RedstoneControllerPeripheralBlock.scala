@@ -21,8 +21,9 @@ import net.minecraft.block.BlockContainer
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
 import cpw.mods.fml.common.registry.GameRegistry
-import net.minecraft.world.IBlockAccess
+import net.minecraft.world.{World, IBlockAccess}
 import net.minecraftforge.common.ForgeDirection
+import com.theenginerd.ccSCADA.tileentity.RedstoneControllerPeripheralTileEntity
 
 abstract class RedstoneControllerPeripheralBlock(blockId: Int)
     extends BlockContainer(blockId, Material.rock)
@@ -36,5 +37,46 @@ abstract class RedstoneControllerPeripheralBlock(blockId: Int)
     //TODO: Load texture icon.
 
     override def getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, metadata: Int, facing: ForgeDirection) = 0
+
     override def isFlammable(world: IBlockAccess, x: Int, y: Int, z: Int, metadata: Int, facing: ForgeDirection) = false
+
+    override def isOpaqueCube = true
+
+    override def isBlockSolidOnSide(world: World, x: Int, y: Int, z: Int, side: ForgeDirection) = true
+
+    override def canProvidePower = true
+
+    override def canConnectRedstone(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int) = true
+
+    override def isProvidingWeakPower(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int): Int =
+    {
+        world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheralTileEntity].getPowerOutputForSide(getNormalizedDirection(side))
+    }
+
+    override def isProvidingStrongPower(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int): Int =
+    {
+        world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheralTileEntity].getPowerOutputForSide(getNormalizedDirection(side))
+    }
+
+    private def getNormalizedDirection(side: Int) =
+        ForgeDirection.getOrientation(side) match
+        {
+            case direction @ (ForgeDirection.UP | ForgeDirection.DOWN) => direction.getOpposite
+            case direction => direction
+        }
+
+    override def onNeighborBlockChange(world: World, x: Int, y: Int, z: Int, blockId: Int) =
+    {
+        if(!world.isRemote)
+        {
+            val tileEntity = world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheralTileEntity]
+
+            for (blockSide <- 0 to 5)
+            {
+                //TODO: Look at perhaps improving this.
+                val power = world.getIndirectPowerLevelTo(x, y, z, blockSide)
+                tileEntity.setPowerInputForSide(getNormalizedDirection(blockSide), power)
+            }
+        }
+    }
 }

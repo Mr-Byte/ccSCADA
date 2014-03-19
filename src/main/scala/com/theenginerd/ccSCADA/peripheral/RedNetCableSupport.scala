@@ -43,17 +43,16 @@ trait RedNetCableSupport extends Peripheral
     registerMethod("getSubnetOutput", getSubnetOutput)
     registerMethod("getSubnetInput", getSubnetInput)
 
-
     def getInputValues(side: ForgeDirection) =
         this.synchronized
         {
-            inputValues.get(side).getOrElse(defaultValues)
+            inputValues.getOrElse(side, defaultValues)
         }
 
     def getOutputValues(side: ForgeDirection) =
         this.synchronized
         {
-            outputValues.get(side).getOrElse(defaultValues)
+            outputValues.getOrElse(side, defaultValues)
         }
 
     def setInputValues(side: ForgeDirection, values: Vector[Int]) =
@@ -229,6 +228,4 @@ trait RedNetCableSupport extends Peripheral
                 throw new Exception("Invalid arguments (side, subnet)")
         }
     }
-
-    private def performSubnetUpdateForSide(outputSide: ForgeDirection, subnet: Int) = ???
 }
