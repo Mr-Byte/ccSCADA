@@ -21,7 +21,6 @@ import net.minecraft.tileentity.TileEntity
 import com.theenginerd.ccSCADA.peripheral.{Conversions, RedstoneControllerPeripheral}
 import net.minecraftforge.common.ForgeDirection
 import dan200.computer.api.IComputerAccess
-import cpw.mods.fml.common.FMLLog
 
 class RedstoneControllerPeripheralTileEntity
     extends TileEntity
@@ -58,15 +57,25 @@ class RedstoneControllerPeripheralTileEntity
             powerOutputValues += (direction -> clamp(power, 0, 15))
             addUpdate(() =>
                       {
-                          //TODO: Fix update logic.
-                          getWorldObj.notifyBlocksOfNeighborChange(xCoord + 1, yCoord, zCoord, getBlockType.blockID)
-                          getWorldObj.notifyBlocksOfNeighborChange(xCoord - 1, yCoord, zCoord, getBlockType.blockID)
-                          getWorldObj.notifyBlocksOfNeighborChange(xCoord, yCoord + 1, zCoord, getBlockType.blockID)
-                          getWorldObj.notifyBlocksOfNeighborChange(xCoord, yCoord - 1, zCoord, getBlockType.blockID)
-                          getWorldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord + 1, getBlockType.blockID)
-                          getWorldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord + 1, getBlockType.blockID)
+                          notifyNeighbors(direction)
                       })
         }
+
+    private def notifyNeighbors(direction: ForgeDirection)
+    {
+        getWorldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType.blockID)
+
+        direction match
+        {
+            case ForgeDirection.DOWN => getWorldObj.notifyBlocksOfNeighborChange(xCoord, yCoord + 1, zCoord, getBlockType.blockID)
+            case ForgeDirection.UP => getWorldObj.notifyBlocksOfNeighborChange(xCoord, yCoord - 1, zCoord, getBlockType.blockID)
+            case ForgeDirection.WEST => getWorldObj.notifyBlocksOfNeighborChange(xCoord + 1, yCoord, zCoord, getBlockType.blockID)
+            case ForgeDirection.EAST => getWorldObj.notifyBlocksOfNeighborChange(xCoord - 1, yCoord, zCoord, getBlockType.blockID)
+            case ForgeDirection.SOUTH => getWorldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord - 1, getBlockType.blockID)
+            case ForgeDirection.NORTH => getWorldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord + 1, getBlockType.blockID)
+            case ForgeDirection.UNKNOWN => ()
+        }
+    }
 
     private def clamp(value: Int, min: Int, max: Int) =
     {

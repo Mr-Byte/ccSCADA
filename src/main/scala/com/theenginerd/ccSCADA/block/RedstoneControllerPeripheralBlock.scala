@@ -62,7 +62,7 @@ abstract class RedstoneControllerPeripheralBlock(blockId: Int)
         ForgeDirection.getOrientation(side) match
         {
             case direction @ (ForgeDirection.UP | ForgeDirection.DOWN) => direction.getOpposite
-            case direction => direction
+            case direction => direction.getOpposite
         }
 
     override def onNeighborBlockChange(world: World, x: Int, y: Int, z: Int, blockId: Int) =
