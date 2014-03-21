@@ -24,9 +24,9 @@ trait Peripheral extends IPeripheral
 {
     private val updateQueue: ConcurrentLinkedQueue[() => Unit] = new ConcurrentLinkedQueue[() => Unit]()
 
-    def addUpdate(update: () => Unit) =
+    def addUpdate(update: => Unit) =
     {
-        updateQueue.add(update)
+        updateQueue.add(() => update)
     }
 
     def update() =

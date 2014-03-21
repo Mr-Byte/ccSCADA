@@ -64,19 +64,4 @@ abstract class RedstoneControllerPeripheralBlock(blockId: Int)
             case direction @ (ForgeDirection.UP | ForgeDirection.DOWN) => direction.getOpposite
             case direction => direction.getOpposite
         }
-
-    override def onNeighborBlockChange(world: World, x: Int, y: Int, z: Int, blockId: Int) =
-    {
-        if(!world.isRemote)
-        {
-            val tileEntity = world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheralTileEntity]
-
-            for (blockSide <- 0 to 5)
-            {
-                //TODO: Look at perhaps improving this.
-                val power = world.getIndirectPowerLevelTo(x, y, z, blockSide)
-                tileEntity.setPowerInputForSide(getNormalizedDirection(blockSide), power)
-            }
-        }
-    }
 }
