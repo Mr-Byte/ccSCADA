@@ -59,9 +59,5 @@ abstract class RedstoneControllerPeripheralBlock(blockId: Int)
     }
 
     private def getNormalizedDirection(side: Int) =
-        ForgeDirection.getOrientation(side) match
-        {
-            case direction @ (ForgeDirection.UP | ForgeDirection.DOWN) => direction.getOpposite
-            case direction => direction.getOpposite
-        }
+        ForgeDirection.getOrientation(side).getOpposite
 }
