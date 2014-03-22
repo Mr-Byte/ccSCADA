@@ -19,16 +19,34 @@ package com.theenginerd.ccSCADA.peripheral
 
 import dan200.computer.api.{ILuaContext, IComputerAccess, IPeripheral}
 import java.util.concurrent.ConcurrentLinkedQueue
+import scala.concurrent.{Await, Promise, Future}
+import scala.concurrent.duration.Duration
+import net.minecraft.world.World
 
 trait Peripheral extends IPeripheral
 {
     private val updateQueue: ConcurrentLinkedQueue[() => Unit] = new ConcurrentLinkedQueue[() => Unit]()
 
-    def addUpdate(update: => Unit) =
+    def getWorld: World
+
+    def execute[T](body: => T): Future[T] =
     {
-        updateQueue.add(() => update)
+        val promise: Promise[T] = Promise()
+
+        updateQueue.add(() =>
+                        {
+                            val result = body
+                            promise.success(result)
+                        })
+
+        promise.future
     }
 
+    def await[T](body: => T): T =
+    {
+        Await.result(execute(body), Duration.Inf)
+    }
+    
     def update() =
     {
         while(!updateQueue.isEmpty)

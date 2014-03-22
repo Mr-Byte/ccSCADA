@@ -68,7 +68,7 @@ trait RedNetCableSupport extends Peripheral
             outputValues += (side -> values)
         }
 
-        addUpdate(() => notifyNeighborOnSideOfUpdate(side))
+        execute(() => notifyNeighborOnSideOfUpdate(side))
     }
 
     private def notifyNeighborOnSideOfUpdate(outputSide: ForgeDirection) =

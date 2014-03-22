@@ -20,9 +20,8 @@ package com.theenginerd.ccSCADA.peripheral
 import net.minecraftforge.common.ForgeDirection
 import dan200.computer.api.IComputerAccess
 import net.minecraft.tileentity.TileEntity
-import scala.concurrent.{Await, Promise}
-import scala.concurrent.duration.Duration
 import net.minecraft.block.Block
+import com.theenginerd.ccSCADA.util.BlockUtility
 
 trait RedstoneControllerPeripheral extends Peripheral
 {
@@ -33,13 +32,10 @@ trait RedstoneControllerPeripheral extends Peripheral
     registerMethod("getInput", getInput)
     registerMethod("setOutput", setOutput)
     registerMethod("getOutput", getOutput)
-
     registerMethod("getAnalogInput", getAnalogInput)
     registerMethod("setAnalogOutput", setAnalogOutput)
     registerMethod("getAnalogOutput", getAnalogOutput)
-
     registerMethod("getComparatorInput", getComparatorInput)
-
 
     def getPowerOutputForSide(direction: ForgeDirection): Int =
         this.synchronized
@@ -48,35 +44,25 @@ trait RedstoneControllerPeripheral extends Peripheral
         }
 
     def setPowerOutputForSide(direction: ForgeDirection, power: Int) =
+    {
         this.synchronized
         {
             powerOutputValues += (direction -> clamp(power, 0, 15))
-            addUpdate
-            {
-                notifyNeighbors(direction)
-            }
         }
 
-    private def notifyNeighbors(direction: ForgeDirection)
-    {
-        getWorldObj.notifyBlockOfNeighborChange(xCoord, yCoord, zCoord, getBlockType.blockID)
-
-        direction match
+        execute
         {
-            case ForgeDirection.UNKNOWN => ()
-            case _ => getWorldObj.notifyBlockOfNeighborChange(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ, getBlockType.blockID)
+            BlockUtility.notifyNeighborsOnSide(getWorld, xCoord, yCoord, zCoord, getBlockType.blockID, direction)
         }
     }
 
     private def clamp(value: Int, min: Int, max: Int) =
-    {
-        if(value > max)
-            max
-        else if(value < min)
-            min
-        else
-            value
-    }
+        value match
+        {
+            case _ if value > max => max
+            case _ if value < min => min
+            case _ => value
+        }
 
     private def getInput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
     {
@@ -93,21 +79,17 @@ trait RedstoneControllerPeripheral extends Peripheral
 
     private def getInputForSide(side: ForgeDirection) =
     {
-        val promise = Promise[Option[Int]]()
-
-        addUpdate
-        {
-            promise.success
+        val inputStrength =
+            await
             {
                 getBlockOnSide(side).flatMap
                 {
                     case (block, (x, y, z)) =>
-                        Some(getWorldObj.getIndirectPowerLevelTo(x, y, z, side.getOpposite.ordinal()))
+                        Some(getWorld.getIndirectPowerLevelTo(x, y, z, side.getOpposite.ordinal()))
                 }
             }
-        }
 
-        Await.result(promise.future, Duration.Inf)
+        inputStrength
     }
 
     private def getOutput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
@@ -131,7 +113,7 @@ trait RedstoneControllerPeripheral extends Peripheral
 
                 null
             case _ =>
-                throw new Exception("Invalid arguments (side).")
+                throw new Exception("Invalid arguments (side, powerState).")
         }
     }
 
@@ -182,27 +164,21 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, _*) =>
-                val promise = Promise[Option[Int]]()
-
-                addUpdate
-                {
-                    promise.success
+                val comparatorStrength =
+                    await
                     {
                         val side = Conversions.stringToDirection(sideName)
                         getBlockOnSide(side).flatMap
                         {
                             case (block, (x, y, z)) =>
                                 if (block.hasComparatorInputOverride)
-                                    Some(block.getComparatorInputOverride(getWorldObj, x, y, z, side.getOpposite.ordinal()))
+                                    Some(block.getComparatorInputOverride(getWorld, x, y, z, side.getOpposite.ordinal()))
                                 else
                                     None
                         }
                     }
-                }
 
-                Await.result(promise.future, Duration.Inf)
-                     .map(result => Array(result.asInstanceOf[AnyRef]))
-                     .getOrElse(null)
+                comparatorStrength.map(result => Array(result.asInstanceOf[AnyRef])).getOrElse(null)
 
             case _ =>
                 throw new Exception("Invalid arguments (side).")
@@ -213,7 +189,7 @@ trait RedstoneControllerPeripheral extends Peripheral
     {
         getCoordinatesForBlockOnSide(direction).flatMap
         {
-            case (x, y, z) => Option(Block.blocksList(getWorldObj.getBlockId(x, y, z)), (x, y, z))
+            case (x, y, z) => Option(Block.blocksList(getWorld.getBlockId(x, y, z)), (x, y, z))
         }
     }
 
@@ -228,19 +204,10 @@ trait RedstoneControllerPeripheral extends Peripheral
 
     override def detach(computer: IComputerAccess) =
     {
-        this.synchronized
+        execute
         {
             powerOutputValues = Map()
-        }
-
-        addUpdate
-        {
-            notifyNeighbors(ForgeDirection.UP)
-            notifyNeighbors(ForgeDirection.DOWN)
-            notifyNeighbors(ForgeDirection.EAST)
-            notifyNeighbors(ForgeDirection.WEST)
-            notifyNeighbors(ForgeDirection.NORTH)
-            notifyNeighbors(ForgeDirection.SOUTH)
+            BlockUtility.notifyAllNeighbors(getWorld, xCoord, yCoord, zCoord, getBlockType.blockID)
         }
     }
 }

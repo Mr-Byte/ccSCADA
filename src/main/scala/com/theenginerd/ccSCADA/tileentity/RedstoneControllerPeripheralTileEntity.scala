@@ -19,16 +19,29 @@ package com.theenginerd.ccSCADA.tileentity
 
 import net.minecraft.tileentity.TileEntity
 import com.theenginerd.ccSCADA.peripheral.RedstoneControllerPeripheral
+import net.minecraft.nbt.NBTTagCompound
+import com.theenginerd.ccSCADA.util.BlockUtility
 
 class RedstoneControllerPeripheralTileEntity
     extends TileEntity
     with RedstoneControllerPeripheral
 {
+    override def getWorld = worldObj
 
     override def updateEntity()
     {
         super.updateEntity()
         update()
+    }
+
+    override def readFromNBT(nbt: NBTTagCompound)
+    {
+        super.readFromNBT(nbt)
+
+        execute
+        {
+            BlockUtility.notifyAllNeighbors(worldObj, xCoord, yCoord, zCoord, getBlockType.blockID)
+        }
     }
 
     def getType: String =
