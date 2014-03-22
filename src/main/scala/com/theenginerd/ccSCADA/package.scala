@@ -17,7 +17,7 @@
 
 package com.theenginerd
 
-package object ccSCADA
+package object ccscada
 {
     object dependentMods
     {
@@ -26,7 +26,7 @@ package object ccSCADA
     }
 
     final val NAME = "ccSCADA"
-    final val ID = "ccSCADA"
+    final val ID = "ccscada"
     final val DEPENDENCIES = "required-after:" + dependentMods.ComputerCraftId + ";after:" + dependentMods.MineFactoryReloadedId
     final val VERSION = "version"
 }

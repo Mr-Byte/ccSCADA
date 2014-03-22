@@ -15,13 +15,13 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.peripheral
+package com.theenginerd.ccscada.peripheral
 
 import net.minecraftforge.common.ForgeDirection
 import dan200.computer.api.IComputerAccess
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.block.Block
-import com.theenginerd.ccSCADA.util.BlockUtility
+import com.theenginerd.ccscada.util.BlockUtility
 
 trait RedstoneControllerPeripheral extends Peripheral
 {
@@ -69,8 +69,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, _*) =>
-                Array(getInputForSide(Conversions.stringToDirection(sideName))
-                        .exists(result => if (result > 0) true else false).asInstanceOf[AnyRef])
+                Array(getInputForSide(Conversions.stringToDirection(sideName)).exists(result => if (result > 0) true else false): java.lang.Boolean)
 
             case _ =>
                 throw new Exception("Invalid arguments (side).")
@@ -97,7 +96,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, _*) =>
-                Array((getPowerOutputForSide(Conversions.stringToDirection(sideName)) > 0).asInstanceOf[AnyRef])
+                Array(getPowerOutputForSide(Conversions.stringToDirection(sideName)) > 0: java.lang.Boolean)
 
             case _ =>
                 throw new Exception("Invalid arguments (side).")
@@ -135,7 +134,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, _*) =>
-                Array(getPowerOutputForSide(Conversions.stringToDirection(sideName)).asInstanceOf[AnyRef])
+                Array(getPowerOutputForSide(Conversions.stringToDirection(sideName)): java.lang.Double)
 
             case _ =>
                 throw new Exception("Invalid arguments (side).")

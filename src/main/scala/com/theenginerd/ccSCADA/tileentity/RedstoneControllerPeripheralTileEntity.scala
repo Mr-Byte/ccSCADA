@@ -15,12 +15,12 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.tileentity
+package com.theenginerd.ccscada.tileentity
 
 import net.minecraft.tileentity.TileEntity
-import com.theenginerd.ccSCADA.peripheral.RedstoneControllerPeripheral
+import com.theenginerd.ccscada.peripheral.RedstoneControllerPeripheral
 import net.minecraft.nbt.NBTTagCompound
-import com.theenginerd.ccSCADA.util.BlockUtility
+import com.theenginerd.ccscada.util.BlockUtility
 
 class RedstoneControllerPeripheralTileEntity
     extends TileEntity

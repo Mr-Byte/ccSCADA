@@ -15,13 +15,13 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.block.factory
+package com.theenginerd.ccscada.block.factory
 
 import cpw.mods.fml.common.registry.GameRegistry
-import com.theenginerd.ccSCADA.block.RedstoneControllerPeripheralBlock
-import com.theenginerd.ccSCADA.tileentity.RedstoneControllerPeripheralTileEntity
-import com.theenginerd.ccSCADA.block.redstoneBundleProvider.RedNetConnectable
-import com.theenginerd.ccSCADA.peripheral.RedNetCableSupport
+import com.theenginerd.ccscada.block.RedstoneControllerPeripheralBlock
+import com.theenginerd.ccscada.tileentity.RedstoneControllerPeripheralTileEntity
+import com.theenginerd.ccscada.block.redstoneBundleProvider.RedNetConnectable
+import com.theenginerd.ccscada.peripheral.RedNetCableSupport
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
 

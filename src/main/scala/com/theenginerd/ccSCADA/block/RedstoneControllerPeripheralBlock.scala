@@ -15,7 +15,7 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.block
+package com.theenginerd.ccscada.block
 
 import net.minecraft.block.BlockContainer
 import net.minecraft.block.material.Material
@@ -23,7 +23,10 @@ import net.minecraft.creativetab.CreativeTabs
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.world.{World, IBlockAccess}
 import net.minecraftforge.common.ForgeDirection
-import com.theenginerd.ccSCADA.tileentity.RedstoneControllerPeripheralTileEntity
+import com.theenginerd.ccscada.tileentity.RedstoneControllerPeripheralTileEntity
+import com.theenginerd.ccscada.ID
+import net.minecraft.client.renderer.texture.IconRegister
+import cpw.mods.fml.relauncher.{SideOnly, Side}
 
 abstract class RedstoneControllerPeripheralBlock(blockId: Int)
     extends BlockContainer(blockId, Material.rock)
@@ -34,7 +37,11 @@ abstract class RedstoneControllerPeripheralBlock(blockId: Int)
 
     GameRegistry.registerBlock(this, "redstoneControllerPeripheral")
 
-    //TODO: Load texture icon.
+    @SideOnly(Side.CLIENT)
+    override def registerIcons(register: IconRegister)
+    {
+        blockIcon = register.registerIcon(s"$ID:redstone_controller")
+    }
 
     override def getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, metadata: Int, facing: ForgeDirection) = 0
 

@@ -15,13 +15,13 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.block.redstoneBundleProvider
+package com.theenginerd.ccscada.block.redstoneBundleProvider
 
 import powercrystals.minefactoryreloaded.api.rednet.{RedNetConnectionType, IConnectableRedNet}
 import net.minecraft.block.Block
 import net.minecraft.world.World
 import net.minecraftforge.common.ForgeDirection
-import com.theenginerd.ccSCADA.peripheral.{RedNetCableSupport, RedstoneControllerPeripheral}
+import com.theenginerd.ccscada.peripheral.RedNetCableSupport
 
 trait RedNetConnectable extends IConnectableRedNet
 {

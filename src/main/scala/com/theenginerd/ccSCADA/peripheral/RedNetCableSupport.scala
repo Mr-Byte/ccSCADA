@@ -15,14 +15,14 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.peripheral
+package com.theenginerd.ccscada.peripheral
 
 import net.minecraft.tileentity.TileEntity
 import net.minecraftforge.common.ForgeDirection
 import dan200.computer.api.IComputerAccess
 import powercrystals.minefactoryreloaded.api.rednet.IRedNetNetworkContainer
 import net.minecraft.block.Block
-import com.theenginerd.ccSCADA.util.AsType
+import com.theenginerd.ccscada.util.AsType
 
 trait RedNetCableSupport extends Peripheral
 {
@@ -68,7 +68,10 @@ trait RedNetCableSupport extends Peripheral
             outputValues += (side -> values)
         }
 
-        execute(() => notifyNeighborOnSideOfUpdate(side))
+        execute
+        {
+            notifyNeighborOnSideOfUpdate(side)
+        }
     }
 
     private def notifyNeighborOnSideOfUpdate(outputSide: ForgeDirection) =
@@ -153,7 +156,7 @@ trait RedNetCableSupport extends Peripheral
                 {
                     if (((value >> index) & 0x1) == 0x1)
                     {
-                        result = result.updated(index, value)
+                        result = result.updated(index, 15)
                     }
                 }
 

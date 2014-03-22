@@ -1,6 +1,6 @@
 [
 {
-  "modid": "ccSCADA",
+  "modid": "ccscada",
   "name": "ccSCADA",
   "description": "A set of peripherals for building factory automation systems.",
   "version": "${version}",

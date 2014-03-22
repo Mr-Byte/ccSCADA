@@ -15,25 +15,26 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccscada.block.factory
+package com.theenginerd.ccscada
 
 import cpw.mods.fml.common.registry.GameRegistry
-import com.theenginerd.ccscada.block.RedstoneControllerPeripheralBlock
-import com.theenginerd.ccscada.tileentity.RedstoneControllerPeripheralTileEntity
-import net.minecraft.tileentity.TileEntity
-import net.minecraft.world.World
+import net.minecraft.item.{Item, ItemStack}
+import net.minecraft.block.Block
 
-object RedstoneControllerPeripheralBlockFactory extends BlockFactory
+import com.theenginerd.ccscada.block.blocks
+import com.theenginerd.ccscada.block.redstoneControllerPeripheralName
+
+package object crafting
 {
-    def createBlock(blockId: Int) =
+    def registerRecipes() =
     {
-        GameRegistry.registerTileEntity(classOf[RedstoneControllerPeripheralTileEntity], "redstoneControllerPeripheral")
-        new RedstoneControllerPeripheralBlock(blockId)
-        {
-            override def createNewTileEntity(world: World): TileEntity =
-            {
-                new RedstoneControllerPeripheralTileEntity
-            }
-        }
+        GameRegistry.addRecipe(new ItemStack(blocks(redstoneControllerPeripheralName), 1),
+                               "SRS",
+                               "RIR",
+                               "SRS",
+                               'S': Character, new ItemStack(Block.stone),
+                               'R': Character, new ItemStack(Item.redstone),
+                               'I': Character, new ItemStack(Item.ingotIron)
+                               )
     }
 }

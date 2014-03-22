@@ -15,7 +15,7 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.block.factory
+package com.theenginerd.ccscada.block.factory
 
 import cpw.mods.fml.common.{Loader, FMLLog}
 import net.minecraft.block.Block

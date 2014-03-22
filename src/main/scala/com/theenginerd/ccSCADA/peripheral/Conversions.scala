@@ -15,7 +15,7 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.peripheral
+package com.theenginerd.ccscada.peripheral
 
 import net.minecraftforge.common.ForgeDirection
 

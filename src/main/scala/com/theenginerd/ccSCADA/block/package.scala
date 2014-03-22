@@ -15,12 +15,12 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA
+package com.theenginerd.ccscada
 
 import net.minecraftforge.common.Configuration
 import net.minecraft.block.Block
 import cpw.mods.fml.common.FMLLog
-import com.theenginerd.ccSCADA.block.factory.BlockFactory
+import com.theenginerd.ccscada.block.factory.BlockFactory
 
 package object block
 {

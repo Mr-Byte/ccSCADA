@@ -15,7 +15,7 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.util
+package com.theenginerd.ccscada.util
 
 object AsType
 {

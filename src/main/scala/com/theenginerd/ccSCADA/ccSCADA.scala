@@ -15,7 +15,7 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA
+package com.theenginerd.ccscada
 
 import cpw.mods.fml.common.{FMLLog, Mod}
 import cpw.mods.fml.common.network.NetworkMod
@@ -53,5 +53,6 @@ object ccSCADA
     def initialize(event: FMLInitializationEvent) =
     {
         block.registerBlocks()
+        crafting.registerRecipes()
     }
 }

@@ -15,7 +15,7 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.peripheral
+package com.theenginerd.ccscada.peripheral
 
 import dan200.computer.api.{ILuaContext, IComputerAccess, IPeripheral}
 import java.util.concurrent.ConcurrentLinkedQueue

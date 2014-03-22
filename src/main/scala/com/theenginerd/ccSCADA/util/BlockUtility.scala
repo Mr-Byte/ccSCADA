@@ -15,7 +15,7 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccSCADA.util
+package com.theenginerd.ccscada.util
 
 import net.minecraftforge.common.ForgeDirection
 import net.minecraft.world.World
