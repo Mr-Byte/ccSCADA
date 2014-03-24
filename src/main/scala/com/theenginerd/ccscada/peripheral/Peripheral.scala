@@ -28,6 +28,10 @@ trait Peripheral extends IPeripheral
     private val updateQueue: ConcurrentLinkedQueue[() => Unit] = new ConcurrentLinkedQueue[() => Unit]()
 
     def getWorld: World
+    def xCoordinate: Int
+    def yCoordinate: Int
+    def zCoordinate: Int
+    def blockId: Int
 
     def execute[T](body: => T): Future[T] =
     {
@@ -54,6 +58,8 @@ trait Peripheral extends IPeripheral
             updateQueue.remove()()
         }
     }
+
+    def load()
 
     class MethodCallback(val methodName: String, callback: (IComputerAccess, Array[AnyRef]) => Array[AnyRef])
     {

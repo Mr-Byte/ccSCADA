@@ -18,15 +18,18 @@
 package com.theenginerd.ccscada.tileentity
 
 import net.minecraft.tileentity.TileEntity
-import com.theenginerd.ccscada.peripheral.RedstoneControllerPeripheral
+import com.theenginerd.ccscada.peripheral.Peripheral
 import net.minecraft.nbt.NBTTagCompound
-import com.theenginerd.ccscada.util.BlockUtility
 
-class RedstoneControllerPeripheralTileEntity
+abstract class PeripheralTileEntity
     extends TileEntity
-    with RedstoneControllerPeripheral
+    with Peripheral
 {
     override def getWorld = worldObj
+    override def xCoordinate = xCoord
+    override def yCoordinate = yCoord
+    override def zCoordinate = zCoord
+    override def blockId = getBlockType.blockID
 
     override def updateEntity()
     {
@@ -40,10 +43,7 @@ class RedstoneControllerPeripheralTileEntity
 
         execute
         {
-            BlockUtility.notifyAllNeighbors(worldObj, xCoord, yCoord, zCoord, getBlockType.blockID)
+            load()
         }
     }
-
-    def getType: String =
-        "redstone_controller"
 }

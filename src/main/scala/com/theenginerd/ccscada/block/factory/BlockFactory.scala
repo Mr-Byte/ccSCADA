@@ -33,8 +33,8 @@ object BlockFactory
 
         val factory = Loader.isModLoaded("MineFactoryReloaded") match
         {
-            case true => RedNetCableControllerPeripheralFactory
-            case false => RedstoneControllerPeripheralBlockFactory
+            case true => RedNetCableControllerFactory
+            case false => RedstoneControllerBlockFactory
         }
 
         factory.createBlock(blockId)

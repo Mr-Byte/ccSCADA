@@ -23,12 +23,12 @@ import net.minecraft.creativetab.CreativeTabs
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.world.{World, IBlockAccess}
 import net.minecraftforge.common.ForgeDirection
-import com.theenginerd.ccscada.tileentity.RedstoneControllerPeripheralTileEntity
 import com.theenginerd.ccscada.ID
 import net.minecraft.client.renderer.texture.IconRegister
 import cpw.mods.fml.relauncher.{SideOnly, Side}
+import com.theenginerd.ccscada.peripheral.RedstoneController
 
-abstract class RedstoneControllerPeripheralBlock(blockId: Int)
+abstract class RedstoneControllerBlock(blockId: Int)
     extends BlockContainer(blockId, Material.rock)
 {
     setHardness(0.5F)
@@ -57,12 +57,12 @@ abstract class RedstoneControllerPeripheralBlock(blockId: Int)
 
     override def isProvidingWeakPower(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int): Int =
     {
-        world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheralTileEntity].getPowerOutputForSide(getNormalizedDirection(side))
+        world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneController].getPowerOutputForSide(getNormalizedDirection(side))
     }
 
     override def isProvidingStrongPower(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int): Int =
     {
-        world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneControllerPeripheralTileEntity].getPowerOutputForSide(getNormalizedDirection(side))
+        world.getBlockTileEntity(x, y, z).asInstanceOf[RedstoneController].getPowerOutputForSide(getNormalizedDirection(side))
     }
 
     private def getNormalizedDirection(side: Int) =

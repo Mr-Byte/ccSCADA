@@ -17,17 +17,15 @@
 
 package com.theenginerd.ccscada.peripheral
 
-import net.minecraft.tileentity.TileEntity
 import net.minecraftforge.common.ForgeDirection
 import dan200.computer.api.IComputerAccess
 import powercrystals.minefactoryreloaded.api.rednet.IRedNetNetworkContainer
 import net.minecraft.block.Block
 import com.theenginerd.ccscada.util.AsType
+import com.theenginerd.ccscada.util.Conversions._
 
 trait RedNetCableSupport extends Peripheral
 {
-    self: TileEntity =>
-
     private val defaultValues = Vector.fill(16)(0)
     private var outputValues: Map[ForgeDirection, Vector[Int]] = Map()
     private var inputValues: Map[ForgeDirection, Vector[Int]] = Map()
@@ -78,45 +76,23 @@ trait RedNetCableSupport extends Peripheral
     {
         def updateNeighborCable(x: Int, y: Int, z: Int) =
         {
-            //For porting forward to 1.7.2
-            val worldObj = getWorldObj
-            val blockId = worldObj.getBlockId(x, y, z)
+            val blockId = getWorld.getBlockId(x, y, z)
             val block = Option(Block.blocksList(blockId))
 
             for(AsType(cable: IRedNetNetworkContainer) <- block)
-                cable.updateNetwork(worldObj, x, y, z)
+                cable.updateNetwork(getWorld, x, y, z)
         }
 
-        outputSide match
-        {
-            case ForgeDirection.EAST =>
-                updateNeighborCable(xCoord + 1, yCoord, zCoord)
 
-            case ForgeDirection.WEST =>
-                updateNeighborCable(xCoord - 1, yCoord, zCoord)
-
-            case ForgeDirection.UP =>
-                updateNeighborCable(xCoord, yCoord + 1, zCoord)
-
-            case ForgeDirection.DOWN =>
-                updateNeighborCable(xCoord, yCoord - 1, zCoord)
-
-            case ForgeDirection.NORTH =>
-                updateNeighborCable(xCoord, yCoord, zCoord - 1)
-
-            case ForgeDirection.SOUTH =>
-                updateNeighborCable(xCoord, yCoord, zCoord + 1)
-
-            case _ =>
-        }
+        updateNeighborCable(xCoordinate + outputSide.offsetX, yCoordinate + outputSide.offsetY, zCoordinate + outputSide.offsetZ)
     }
 
     private def getBundledInput(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
     {
         arguments match
         {
-            case Array(side: String, _*) =>
-                Array(convertToBundleState(getInputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef])
+            case Array(sideName: String, _*) =>
+                Array(convertToBundleState(getInputValues(sideName)).asInstanceOf[AnyRef])
             case _ =>
                 throw new Exception("Invalid argument (side).")
         }
@@ -126,8 +102,8 @@ trait RedNetCableSupport extends Peripheral
     {
         arguments match
         {
-            case Array(side: String, _*) =>
-                Array(convertToBundleState(getOutputValues(Conversions.stringToDirection(side))).asInstanceOf[AnyRef])
+            case Array(sideName: String, _*) =>
+                Array(convertToBundleState(getOutputValues(sideName)).asInstanceOf[AnyRef])
             case _ =>
                 throw new Exception("Invalid argument (side).")
         }
@@ -160,8 +136,7 @@ trait RedNetCableSupport extends Peripheral
                     }
                 }
 
-                val side = Conversions.stringToDirection(sideName)
-                setOutputValues(side, result)
+                setOutputValues(sideName, result)
 
                 null
             case _ =>
@@ -175,7 +150,7 @@ trait RedNetCableSupport extends Peripheral
         {
             case Array(sideName: String, color: java.lang.Double, _*) =>
                 val index = Math.getExponent(color.toDouble)
-                val inputValues = getInputValues(Conversions.stringToDirection(sideName))
+                val inputValues = getInputValues(sideName)
 
                 if(index < 0 || index > inputValues.length)
                     throw new Exception("Invalid argument (color).")
@@ -192,10 +167,9 @@ trait RedNetCableSupport extends Peripheral
         arguments match
         {
             case Array(sideName: String, subnet: java.lang.Double, value: java.lang.Double, _*) =>
-                val side = Conversions.stringToDirection(sideName)
-                val outputs = getOutputValues(side)
+                val outputs = getOutputValues(sideName)
 
-                setOutputValues(side, outputs.updated(subnet.toInt, value.toInt))
+                setOutputValues(sideName, outputs.updated(subnet.toInt, value.toInt))
 
                 null
 
@@ -209,7 +183,7 @@ trait RedNetCableSupport extends Peripheral
         arguments match
         {
             case Array(sideName: String, subnet: java.lang.Double, _*) =>
-                val outputs = getOutputValues(Conversions.stringToDirection(sideName))
+                val outputs = getOutputValues(sideName)
 
                 Array(outputs(subnet.toInt).asInstanceOf[AnyRef])
 
@@ -223,7 +197,7 @@ trait RedNetCableSupport extends Peripheral
         arguments match
         {
             case Array(sideName: String, subnet: java.lang.Double, _*) =>
-                val outputs = getInputValues(Conversions.stringToDirection(sideName))
+                val outputs = getInputValues(sideName)
 
                 Array(outputs(subnet.toInt).asInstanceOf[AnyRef])
 

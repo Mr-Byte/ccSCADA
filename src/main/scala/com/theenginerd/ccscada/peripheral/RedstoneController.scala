@@ -19,14 +19,12 @@ package com.theenginerd.ccscada.peripheral
 
 import net.minecraftforge.common.ForgeDirection
 import dan200.computer.api.IComputerAccess
-import net.minecraft.tileentity.TileEntity
 import net.minecraft.block.Block
 import com.theenginerd.ccscada.util.BlockUtility
+import com.theenginerd.ccscada.util.Conversions._
 
-trait RedstoneControllerPeripheral extends Peripheral
+trait RedstoneController extends Peripheral
 {
-    self: TileEntity =>
-
     private var powerOutputValues: Map[ForgeDirection, Int] = Map()
 
     registerMethod("getInput", getInput)
@@ -52,7 +50,7 @@ trait RedstoneControllerPeripheral extends Peripheral
 
         execute
         {
-            BlockUtility.notifyNeighborsOnSide(getWorld, xCoord, yCoord, zCoord, getBlockType.blockID, direction)
+            BlockUtility.notifyNeighborsOnSide(getWorld, xCoordinate, yCoordinate, zCoordinate, blockId, direction)
         }
     }
 
@@ -69,7 +67,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, _*) =>
-                Array(getInputForSide(Conversions.stringToDirection(sideName)).exists(result => if (result > 0) true else false): java.lang.Boolean)
+                Array(getInputForSide(sideName).exists(result => if (result > 0) true else false): java.lang.Boolean)
 
             case _ =>
                 throw new Exception("Invalid arguments (side).")
@@ -96,7 +94,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, _*) =>
-                Array(getPowerOutputForSide(Conversions.stringToDirection(sideName)) > 0: java.lang.Boolean)
+                Array(getPowerOutputForSide(sideName) > 0: java.lang.Boolean)
 
             case _ =>
                 throw new Exception("Invalid arguments (side).")
@@ -108,7 +106,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, isPowered: java.lang.Boolean, _*) =>
-                setPowerOutputForSide(Conversions.stringToDirection(sideName), if(isPowered) 15 else 0)
+                setPowerOutputForSide(sideName, if(isPowered) 15 else 0)
 
                 null
             case _ =>
@@ -121,7 +119,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, _*) =>
-                Array(getInputForSide(Conversions.stringToDirection(sideName))
+                Array(getInputForSide(sideName)
                           .getOrElse(0).asInstanceOf[AnyRef])
 
             case _ =>
@@ -134,7 +132,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, _*) =>
-                Array(getPowerOutputForSide(Conversions.stringToDirection(sideName)): java.lang.Double)
+                Array(getPowerOutputForSide(sideName): java.lang.Double)
 
             case _ =>
                 throw new Exception("Invalid arguments (side).")
@@ -146,7 +144,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         arguments match
         {
             case Array(sideName: String, power: java.lang.Double, _*) if power.toInt <= 15 && power.toInt >= 0 =>
-                setPowerOutputForSide(Conversions.stringToDirection(sideName), power.toInt)
+                setPowerOutputForSide(sideName, power.toInt)
 
                 null
 
@@ -166,7 +164,7 @@ trait RedstoneControllerPeripheral extends Peripheral
                 val comparatorStrength =
                     await
                     {
-                        val side = Conversions.stringToDirection(sideName)
+                        val side = sideName
                         getBlockOnSide(side).flatMap
                         {
                             case (block, (x, y, z)) =>
@@ -197,7 +195,7 @@ trait RedstoneControllerPeripheral extends Peripheral
         direction match
         {
             case ForgeDirection.UNKNOWN => None
-            case _ => Some(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ)
+            case _ => Some(xCoordinate + direction.offsetX, yCoordinate + direction.offsetY, zCoordinate + direction.offsetZ)
         }
     }
 
@@ -206,7 +204,15 @@ trait RedstoneControllerPeripheral extends Peripheral
         execute
         {
             powerOutputValues = Map()
-            BlockUtility.notifyAllNeighbors(getWorld, xCoord, yCoord, zCoord, getBlockType.blockID)
+            BlockUtility.notifyAllNeighbors(getWorld, xCoordinate, yCoordinate, zCoordinate, blockId)
         }
     }
+
+    override def load() =
+    {
+        BlockUtility.notifyAllNeighbors(getWorld, xCoordinate, yCoordinate, zCoordinate, blockId)
+    }
+
+    def getType: String =
+        "redstone_controller"
 }

@@ -15,20 +15,20 @@
  * ========================================================================
  */
 
-package com.theenginerd.ccscada.peripheral
+package com.theenginerd.ccscada.util
 
 import net.minecraftforge.common.ForgeDirection
 
 object Conversions
 {
-    def stringToDirection(side: String): ForgeDirection =
-        side.toLowerCase match
-        {
-            case "top" => ForgeDirection.UP
-            case "bottom" => ForgeDirection.DOWN
-            case "left" => ForgeDirection.WEST
-            case "right" => ForgeDirection.EAST
-            case "front" => ForgeDirection.SOUTH
-            case "back" => ForgeDirection.NORTH
-        }
-}
+     implicit def stringToDirection(side: String): ForgeDirection =
+         side.toLowerCase match
+         {
+             case "top" => ForgeDirection.UP
+             case "bottom" => ForgeDirection.DOWN
+             case "left" => ForgeDirection.WEST
+             case "right" => ForgeDirection.EAST
+             case "front" => ForgeDirection.SOUTH
+             case "back" => ForgeDirection.NORTH
+         }
+ }
