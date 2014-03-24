@@ -31,14 +31,22 @@ abstract class PeripheralTileEntity
     override def zCoordinate = zCoord
     override def blockId = getBlockType.blockID
 
-    override def updateEntity()
+    override def updateEntity() =
     {
         super.updateEntity()
         update()
     }
 
-    override def readFromNBT(nbt: NBTTagCompound)
+    override def writeToNBT(nbt: NBTTagCompound) =
     {
+        nbt.setString("friendlyName", friendlyName)
+
+        super.writeToNBT(nbt)
+    }
+
+    override def readFromNBT(nbt: NBTTagCompound) =
+    {
+        friendlyName = nbt.getString("friendlyName")
         super.readFromNBT(nbt)
 
         execute

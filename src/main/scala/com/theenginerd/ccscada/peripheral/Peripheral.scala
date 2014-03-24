@@ -33,6 +33,40 @@ trait Peripheral extends IPeripheral
     def zCoordinate: Int
     def blockId: Int
 
+    registerMethod("setFriendlyName", setFriendlyName)
+    registerMethod("getFriendlyName", getFriendlyName)
+
+    private def setFriendlyName(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        arguments match
+        {
+            case Array(name: String, _*) =>
+                friendlyName = name
+                null
+
+            case _ =>
+                throw new Exception("Invalid argument (name).")
+        }
+    }
+
+    private def getFriendlyName(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        Array(friendlyName: String)
+    }
+
+    private var _friendlyName: String = ""
+
+    def friendlyName_=(name: String): Unit =
+        this.synchronized
+        {
+            _friendlyName = name
+        }
+
+    def friendlyName: String =
+    {
+        _friendlyName
+    }
+
     def execute[T](body: => T): Future[T] =
     {
         val promise: Promise[T] = Promise()
