@@ -14,7 +14,7 @@ buildscript {
 apply plugin: 'forge'
 apply plugin: 'scala'
 
-version = "1.0.0_1.6.4"
+version = "1.0.1_1.6.4"
 group= "com.theenginerd.ccscada" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ccSCADA"
 
