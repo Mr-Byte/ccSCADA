@@ -26,46 +26,13 @@ import net.minecraft.world.World
 trait Peripheral extends IPeripheral
 {
     private val updateQueue: ConcurrentLinkedQueue[() => Unit] = new ConcurrentLinkedQueue[() => Unit]()
+    private var methods: Array[MethodCallback] = Array()
 
     def getWorld: World
     def xCoordinate: Int
     def yCoordinate: Int
     def zCoordinate: Int
     def blockId: Int
-
-    registerMethod("setFriendlyName", setFriendlyName)
-    registerMethod("getFriendlyName", getFriendlyName)
-
-    private def setFriendlyName(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
-    {
-        arguments match
-        {
-            case Array(name: String, _*) =>
-                friendlyName = name
-                null
-
-            case _ =>
-                throw new Exception("Invalid argument (name).")
-        }
-    }
-
-    private def getFriendlyName(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
-    {
-        Array(friendlyName: String)
-    }
-
-    private var _friendlyName: String = ""
-
-    def friendlyName_=(name: String): Unit =
-        this.synchronized
-        {
-            _friendlyName = name
-        }
-
-    def friendlyName: String =
-    {
-        _friendlyName
-    }
 
     def execute[T](body: => T): Future[T] =
     {
@@ -100,8 +67,6 @@ trait Peripheral extends IPeripheral
         def apply(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] = callback(computer, arguments)
     }
 
-    private var methods: Array[MethodCallback] = Array()
-
     def registerMethod(name: String, method: (IComputerAccess, Array[AnyRef]) => Array[AnyRef]) =
     {
         methods :+= new MethodCallback(name, method)
@@ -123,4 +88,40 @@ trait Peripheral extends IPeripheral
 
     def detach(computer: IComputerAccess) =
         ()
+
+    //Base peripheral Lua methods.
+    registerMethod("setFriendlyName", setFriendlyName)
+    registerMethod("getFriendlyName", getFriendlyName)
+
+    private def setFriendlyName(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        arguments match
+        {
+            case Array(name: String, _*) =>
+                friendlyName = name
+                null
+
+            case _ =>
+                throw new Exception("Invalid argument (name).")
+        }
+    }
+
+    private def getFriendlyName(computer: IComputerAccess, arguments: Array[AnyRef]): Array[AnyRef] =
+    {
+        Array(friendlyName: String)
+    }
+
+    private var _friendlyName: String = ""
+
+    def friendlyName_=(name: String): Unit =
+        this.synchronized
+        {
+            _friendlyName = name
+        }
+
+    def friendlyName: String =
+    {
+        _friendlyName
+    }
+
 }

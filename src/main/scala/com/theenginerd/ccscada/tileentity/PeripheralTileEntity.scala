@@ -39,15 +39,14 @@ abstract class PeripheralTileEntity
 
     override def writeToNBT(nbt: NBTTagCompound) =
     {
-        nbt.setString("friendlyName", friendlyName)
-
         super.writeToNBT(nbt)
+        nbt.setString("friendlyName", friendlyName)
     }
 
     override def readFromNBT(nbt: NBTTagCompound) =
     {
-        friendlyName = nbt.getString("friendlyName")
         super.readFromNBT(nbt)
+        friendlyName = nbt.getString("friendlyName")
 
         execute
         {
